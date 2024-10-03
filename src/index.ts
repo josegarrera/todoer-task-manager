@@ -20,7 +20,7 @@ mongoose
 
 const todoSchema = new mongoose.Schema({
   title: String,
-  completed: Boolean,
+  completed: { type: Boolean, default: false },
 });
 
 const Todo = mongoose.model('Todo', todoSchema);
@@ -41,6 +41,17 @@ app.put('/todos/:id', async (req, res) => {
   const { id } = req.params;
   const { title, completed } = req.body;
   const todo = await Todo.findByIdAndUpdate(id, { title, completed }, { new: true });
+
+  if (todo) {
+    res.json(todo);
+  } else {
+    res.status(404).json({ message: 'Todo not found' });
+  }
+});
+
+app.patch('/todos/:id/complete', async (req, res) => {
+  const { id } = req.params;
+  const todo = await Todo.findByIdAndUpdate(id, { completed: true }, { new: true });
 
   if (todo) {
     res.json(todo);
