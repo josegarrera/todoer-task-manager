@@ -22,7 +22,7 @@ jobs:
         run: npm install
 
       - name: Build Docker image
-        run: docker build -t josegarrera/todo-service:$GITHUB_SHA --build-arg MONGO_URI=${{ secrets.MONGO_URI }} .
+        run: docker build --build-arg MONGO_URI=${{ secrets.MONGO_URI }} -t josegarrera/todo-service:$GITHUB_SHA .
 
       - name: Log in to Docker Hub
         run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
