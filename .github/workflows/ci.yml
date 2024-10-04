@@ -33,6 +33,9 @@ jobs:
       - name: Run Contract Verification Tests
         run: npm test -- --testPathPattern=contract
 
+      - name: Run Linter
+        run: npm run lint
+
       - name: Build Docker image
         run: docker build --build-arg MONGO_URI="${{ secrets.MONGO_URI }}" -t josegarrera/todo-service:$GITHUB_SHA .
 
