@@ -1,4 +1,4 @@
-name: Todoer Task Manager CI (Commit Stage)
+name: Task Manager CI
 
 on:
   push:
