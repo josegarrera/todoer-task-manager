@@ -20,6 +20,6 @@ jobs:
           script: |
             docker stop task-manager || true
             docker rm task-manager || true
-            echo "GitHub SHA: $GITHUB_SHA"
-            docker pull josegarrera/task-manager:$GITHUB_SHA
-            docker run -d --name task-manager -p 3000:3000 josegarrera/task-manager:$GITHUB_SHA
+            echo "GitHub SHA: ${{ github.sha }}"
+            docker pull josegarrera/task-manager:${{ github.sha }}
+            docker run -d --name task-manager -p 3000:3000 josegarrera/task-manager:${{ github.sha }}
