@@ -1,4 +1,4 @@
-name: Todoer Task Manager Release (Deploy to GCP)
+name: Task Manager Release
 
 on:
   workflow_dispatch:
