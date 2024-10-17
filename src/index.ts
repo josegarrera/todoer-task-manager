@@ -25,6 +25,10 @@ const todoSchema = new mongoose.Schema({
 
 const Todo = mongoose.model('Todo', todoSchema);
 
+app.get('/health', (req, res) => {
+  res.status(200).send('OK');
+});
+
 app.post('/todos', async (req, res) => {
   const { title } = req.body;
   const newTodo = new Todo({ title, completed: false });
