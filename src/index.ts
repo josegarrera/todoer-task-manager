@@ -49,7 +49,7 @@ app.put('/todos/:id', async (req, res) => {
   if (todo) {
     res.json(todo);
   } else {
-    res.status(404).json({ message: 'Todo not found' });
+    res.status(404).json({ message: 'Todo was not found' });
   }
 });
 
