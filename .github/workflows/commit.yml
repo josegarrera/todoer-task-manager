@@ -1,4 +1,4 @@
-name: Task Manager CI
+name: Commit
 
 on:
   push:

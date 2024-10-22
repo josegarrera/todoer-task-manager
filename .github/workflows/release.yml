@@ -1,4 +1,4 @@
-name: Task Manager Release
+name: Release
 
 on:
   workflow_dispatch:
