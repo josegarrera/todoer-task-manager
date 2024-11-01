@@ -38,7 +38,7 @@ jobs:
             docker stop task-manager || true
             docker rm task-manager || true
             docker pull josegarrera/task-manager:${{ env.DOCKER_IMAGE_TAG }}
-            docker run -d --name task-manager -p 80:80 -e VITE_API_URL="${{ env.VM_IP }}" josegarrera/task-manager:${{ env.DOCKER_IMAGE_TAG }}
+            docker run -d --name task-manager -p 3001:3001 -e VITE_API_URL="${{ env.VM_IP }}" josegarrera/task-manager:${{ env.DOCKER_IMAGE_TAG }}
 
       - name: SSH and Deploy to GCP VM in PROD
         if: ${{ github.event.inputs.environment == 'PROD' }}
@@ -51,4 +51,4 @@ jobs:
             docker stop task-manager || true
             docker rm task-manager || true
             docker pull josegarrera/task-manager:${{ env.DOCKER_IMAGE_TAG }}
-            docker run -d --name task-manager -p 80:80 -e VITE_API_URL="${{ env.VM_IP }}" josegarrera/task-manager:${{ env.DOCKER_IMAGE_TAG }}
+            docker run -d --name task-manager -p 3001:3001 -e VITE_API_URL="${{ env.VM_IP }}" josegarrera/task-manager:${{ env.DOCKER_IMAGE_TAG }}
