@@ -2,23 +2,53 @@ name: Release
 
 on:
   workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Target Environment (e.g. UAT, PROD)'
+        required: true
+        default: 'UAT'
 
 jobs:
   release:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Set environment variables
+        id: vars
+        run: |
+          if [ "${{ github.event.inputs.environment }}" == "UAT" ]; then
+            echo "VM_IP=${{ secrets.UAT_VM_IP }}" >> $GITHUB_ENV
+            echo "DOCKER_IMAGE_TAG=${{ github.sha }}" >> $GITHUB_ENV
+          elif [ "${{ github.event.inputs.environment }}" == "PROD" ]; then
+            echo "VM_IP=${{ secrets.PROD_VM_IP }}" >> $GITHUB_ENV
+            echo "DOCKER_IMAGE_TAG=latest" >> $GITHUB_ENV
+          fi
+
       - name: Log in to Docker Hub
         run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
 
-      - name: SSH and Deploy to GCP VM
+      - name: SSH and Deploy to GCP VM in UAT
+        if: ${{ github.event.inputs.environment == 'UAT' }}
         uses: appleboy/ssh-action@v0.1.3
         with:
-          host: ${{ secrets.VM_IP }}
+          host: ${{ env.VM_IP }}
           username: josegarrera
-          key: ${{ secrets.GCP_SSH_PRIVATE_KEY }}
+          key: ${{ secrets.UAT_GCP_SSH_PRIVATE_KEY }}
           script: |
             docker stop task-manager || true
             docker rm task-manager || true
-            docker pull josegarrera/task-manager:${{ github.sha }}
-            docker run -d --name task-manager -p 3001:3001 -e MONGO_URI="${{ secrets.MONGO_URI }}" josegarrera/task-manager:${{ github.sha }}
+            docker pull josegarrera/task-manager:${{ env.DOCKER_IMAGE_TAG }}
+            docker run -d --name task-manager -p 80:80 -e VITE_API_URL="${{ env.VM_IP }}" josegarrera/task-manager:${{ env.DOCKER_IMAGE_TAG }}
+
+      - name: SSH and Deploy to GCP VM in PROD
+        if: ${{ github.event.inputs.environment == 'PROD' }}
+        uses: appleboy/ssh-action@v0.1.3
+        with:
+          host: ${{ env.VM_IP }}
+          username: josegarrera
+          key: ${{ secrets.PROD_GCP_SSH_PRIVATE_KEY }}
+          script: |
+            docker stop task-manager || true
+            docker rm task-manager || true
+            docker pull josegarrera/task-manager:${{ env.DOCKER_IMAGE_TAG }}
+            docker run -d --name task-manager -p 80:80 -e VITE_API_URL="${{ env.VM_IP }}" josegarrera/task-manager:${{ env.DOCKER_IMAGE_TAG }}
